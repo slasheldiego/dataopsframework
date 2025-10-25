@@ -14,14 +14,14 @@ try:
 except:
     env = "dev"
 
-cfg_lines = spark.read.text(f"s3a://<utec-s3-name>/config/env.{env}.json").collect()
+cfg_lines = spark.read.text(f"s3a://utec-datalake-demo/config/env.{env}.json").collect()
 cfg_json = "\n".join([row[0] for row in cfg_lines])
 cfg = json.loads(cfg_json)
 run_id = uuid.uuid4().hex
 
 log_event(cfg, run_id, "validate", "STARTED", json.dumps({"info":"init"}))
 
-silver = f"{cfg['database']}.{cfg['silver_table']}"
+silver = f"{cfg['silver_db']}.{cfg['silver_table']}"
 df = spark.table(silver)
 
 df_valid, results = apply_expectations(df, cfg)

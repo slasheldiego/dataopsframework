@@ -15,7 +15,7 @@ try:
 except:
     env = "dev"
 
-cfg_lines = spark.read.text(f"s3a://<utec-s3-name>/config/env.{env}.json").collect()
+cfg_lines = spark.read.text(f"s3a://utec-datalake-demo/config/env.{env}.json").collect()
 cfg_json = "\n".join([row[0] for row in cfg_lines])
 cfg = json.loads(cfg_json)
 run_id = uuid.uuid4().hex
@@ -23,7 +23,7 @@ run_id = uuid.uuid4().hex
 log_event(cfg, run_id, "extract", "STARTED", json.dumps({"info": "init"}))
 
 df = read_csv_to_df(cfg["input_csv_path"]).withColumn("ingest_ts", F.current_timestamp())
-full_table = f"{cfg['database']}.{cfg['bronze_table']}"
+full_table = f"{cfg['bronze_db']}.{cfg['bronze_table']}"
 write_delta(df, full_table, mode="overwrite")
 
 log_event(cfg, run_id, "extract", "SUCCESS", json.dumps({"rows": df.count()}))
