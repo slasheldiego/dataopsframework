@@ -13,7 +13,7 @@ except:
     env = "dev"
 
 # Leer config desde DBFS
-cfg_lines = spark.read.text(f"s3a://utec-datalake-demo/config/env.{env}.json").collect()
+cfg_lines = spark.read.text(f"s3a://<utec-s3-name>/config/env.{env}.json").collect()
 cfg_json = "\n".join([row[0] for row in cfg_lines])
 cfg = json.loads(cfg_json)
 
